@@ -111,28 +111,124 @@
         rarity: "Common"
       },
       bladeStar: {
-        name: "Blade Star",
-        image: "https://i.postimg.cc/7YxXhKXN/blade-star.png",
-        value: 150,
-        range: "140-160",
+        name: "Quartz Knife",
+        image: "https://i.postimg.cc/Cdy8JRTD/image.png",
+        value: 25,
+        range: "N/A",
         demand: "7/10",
         status: "Rising",
-        origin: "Galaxy Crate",
-        chance: "5%",
-        rarity: "Ultra Rare"
+        origin: "Standard/Premium Case",
+        chance: "Standard: 60% | Premium: 30%",
+        rarity: "Common"
       },
       toxicEdge: {
-        name: "Toxic Edge",
-        image: "https://i.postimg.cc/tTw9C6ZT/toxic-edge.png",
-        value: 80,
-        range: "75-90",
-        demand: "6/10",
+        name: "Aluminum Knife",
+        image: "https://i.postimg.cc/PqLC606M/image.png",
+        value: 15,
+        range: "N/A",
+        demand: "1/10",
         status: "Stable",
-        origin: "Toxic Case",
-        chance: "15%",
-        rarity: "Rare"
-      }
+        origin: "Standard Case 2/Premium Case 2",
+        chance: "N/A%",
+        rarity: "Common"
+      },
+      crimsonFang: {
+        name: "Crimson Fang",
+        image: "https://i.postimg.cc/xTxxYcL3/crimson-fang.png",
+        value: 95,
+        range: "90-100",
+        demand: "6/10",
+        status: "Rising",
+        origin: "Blood Case",
+        chance: "10%",
+        rarity: "Uncommon"
+      }, 
+     chromeGun: {
+  name: "Chrome Gun",
+  image: "https://i.postimg.cc/fWxP0pT1/image.png",   // ← replace with your URL
+  value: 20,
+  range: "-1",                // recent change
+  demand: "1/10",
+  status: "Stable",
+  origin: "Standard Case 2/Premium Case 2",
+  chance: "N/A",
+  rarity: "Common",
+  lastUpdated: "1 year ago"
+},
+leatherGun: {
+  name: "Leather Gun",
+  image: "https://i.postimg.cc/qBXm7K1T/image.png",
+  value: 20,
+  range: "N/A",
+  demand: "1/10",
+  status: "Stable",
+  origin: "Standard Case 2/Premium Case 2",
+  chance: "N/A",
+  rarity: "Common",
+  lastUpdated: "1 year ago"
+},
+chromeKnife: {
+  name: "Chrome Knife",
+  image: "https://i.postimg.cc/d1kGyhPw/image.png",
+  value: 25,
+  range: "N/A",
+  demand: "1/10",
+  status: "Stable",
+  origin: "Standard Case 2/Premium Case 2",
+  chance: "N/A",
+  rarity: "Common",
+  lastUpdated: "1 year ago"
+},
+dustKnife: {
+  name: "Dust Knife",
+  image: "https://i.postimg.cc/9M7qfsZf/image.png",
+  value: 20,
+  range: "N/A",
+  demand: "1/10",
+  status: "Stable",
+  origin: "Standard Case 2/Premium Case 2",
+  chance: "N/A",
+  rarity: "Common",
+  lastUpdated: "1 year ago"
+},
+
+leafKnife: {
+  name: "Leaf Knife",
+  image: "https://i.postimg.cc/SxrCp6kt/image.png",
+  value: 230,
+  range: "+150",               // recent change
+  demand: "1/10",
+  status: "Stable",
+  origin: "Battlepass | Season 3",
+  chance: "N/A",
+  rarity: "Common",
+  lastUpdated: "6 months ago"
+}         
+      
     };
+    
+  
+
+function getRarityClass(rarity) {
+  switch (rarity) {
+    case "Common":
+      return "bg-gray-500 text-white px-2 py-0.5 rounded text-xs";
+    case "Uncommon":
+      return "bg-green-500 text-black px-2 py-0.5 rounded text-xs"; // GREEN
+    case "Rare":
+      return "bg-blue-500 text-white px-2 py-0.5 rounded text-xs";
+    case "Legendary":
+      return "bg-red-600 text-white px-2 py-0.5 rounded text-xs";   // RED
+    case "Ultra Rare":
+      return "bg-yellow-500 text-black px-2 py-0.5 rounded text-xs";
+    case "Collectible":
+      return "bg-pink-500 text-white px-2 py-0.5 rounded text-xs";
+    default:
+      return "bg-gray-600 text-white px-2 py-0.5 rounded text-xs";
+  }
+}
+
+
 
     const offerItems = [];
     const requestItems = [];
@@ -214,7 +310,7 @@
           card.innerHTML = `
             <img src="${knife.image}" class="knife-img" />
             <div class="knife-info">
-              <span>${knife.rarity.toUpperCase()}</span>
+              <span class="${getRarityClass(knife.rarity)}">${knife.rarity.toUpperCase()}</span>
               <h2>${knife.name}</h2>
               <p>💰 Value: ${knife.value}</p>
               <p>📉 Demand: ${knife.demand}</p>
@@ -275,7 +371,6 @@
     }
     .knife-info span {
       font-size: 0.7rem;
-      background: #3a3655;
       padding: 2px 6px;
       border-radius: 4px;
       text-transform: uppercase;
@@ -294,4 +389,3 @@
 
 </body>
 </html>
-
