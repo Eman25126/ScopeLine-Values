@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Knife Value Calculator</title>
+  <style>
+    body {
+      background-color: #0f0f19;
+      color: #e0e0e0;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: start;
+      height: 100vh;
+      margin: 0;
+      padding-top: 40px;
+    }
+    .calculator-card {
+      background-color: #1c1c2d;
+      padding: 24px;
+      border-radius: 12px;
+      width: 100%;
+      max-width: 360px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    }
+    .calculator-card h1 {
+      margin-bottom: 16px;
+      text-align: center;
+      font-size: 1.6rem;
+    }
+    .field {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 16px;
+    }
+    .field label {
+      margin-bottom: 4px;
+      font-size: 0.9rem;
+    }
+    .field input {
+      padding: 8px 12px;
+      border-radius: 6px;
+      border: none;
+      font-size: 1rem;
+      background-color: #28293d;
+      color: #e0e0e0;
+    }
+    .field input::placeholder {
+      color: #888;
+    }
+    .ops {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    .ops button {
+      flex: 1;
+      margin: 0 4px;
+      padding: 10px 0;
+      background: linear-gradient(145deg, #3a3a52, #1a1a2c);
+      border: none;
+      border-radius: 6px;
+      color: #e0e0e0;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .ops button:hover {
+      background: #575777;
+    }
+    #result {
+      font-size: 1.2rem;
+      text-align: center;
+      padding: 10px;
+      border-radius: 6px;
+      background-color: #28293d;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="calculator-card">
+    <h1>Knife Value Calculator</h1>
+
+    <div class="field">
+      <label for="val">Knife Value</label>
+      <input type="number" id="val" placeholder="Value per knife">
+    </div>
+
+    <div class="field">
+      <label for="qty">Quantity</label>
+      <input type="number" id="qty" placeholder="Number of knives">
+    </div>
+
+    <div class="field">
+      <label for="tax">Tax / Fee %</label>
+      <input type="number" id="tax" placeholder="e.g. 15">
+    </div>
+
+    <div class="ops">
+      <button onclick="calc('*')">Total</button>
+      <button onclick="calc('-')">With Tax</button>
+      <button onclick="calc('/')">Avg / Knife</button>
+    </div>
+
+    <div id="result">Result: —</div>
+  </div>
+
+  <script>
+    function calc(op) {
+      const v = parseFloat(document.getElementById('val').value);
+      const q = parseFloat(document.getElementById('qty').value);
+      const t = parseFloat(document.getElementById('tax').value) / 100;
+      let output = '';
+      if (isNaN(v) || isNaN(q)) {
+        output = 'Enter valid value & quantity';
+      } else {
+        const total = v * q;
+        if (op === '*') {
+          output = `Total: ${total.toFixed(2)}`;
+        } else if (op === '-') {
+          if (isNaN(t)) {
+            output = 'Enter valid tax %';
+          } else {
+            const net = total * (1 - t);
+            output = `After tax: ${net.toFixed(2)}`;
+          }
+        } else if (op === '/') {
+          output = `Avg per knife: ${ (q ? total / q : 0).toFixed(2) }`;
+        }
+      }
+      document.getElementById('result').textContent = output;
+    }
+  </script>
+</body>
+</html>
