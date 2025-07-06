@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Knife Inventory</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-[#0e0c1c] text-white font-sans">
+   <!-- Navigation -->
+  <nav class="bg-[#1a182b] flex items-center justify-start px-6 py-4 shadow-md">
+    <div class="flex space-x-6 font-semibold text-sm">
+      <button onclick="toggleCalculator()" class="hover:text-purple-400 flex items-center space-x-1">
+        <span>🫒</span><span>CALCULATOR</span>
+      </button>
+      <!-- Compact Join Discord Text Button -->
+      <a href="https://discord.gg/branHmGu3P" target="_blank">
+        <button class="text-sm font-semibold text-indigo-500 hover:text-indigo-400 flex items-center space-x-1">
+          <img src="https://static.vecteezy.com/system/resources/previews/006/892/625/non_2x/discord-logo-icon-editorial-free-vector.jpg" class="w-4 h-4"/>
+          <span>Join Discord</span>
+        </button>
+      </a>
+    </div>
+  </nav>
+
+
+  <!-- Search Filters -->
+  <div class="p-6 max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-4">
+    <input type="text" id="searchInput" oninput="filterKnives()" placeholder="Search knives..." class="w-full px-4 py-2 rounded-xl text-black placeholder-gray-500 focus:outline-none"/>
+    <select id="raritySelect" onchange="filterKnives()" class="w-full px-4 py-2 rounded-xl text-black">
+      <option value="">All Rarities</option>
+      <option value="Common">Common</option>
+      <option value="Uncommon">Uncommon</option>
+      <option value="Rare">Rare</option>
+      <option value="Legendary">Legendary</option>
+      <option value="Ultra Rare">Ultra Rare</option>
+      <option value="Collectible">Collectible</option>
+    </select>
+  </div>
+   
+
+  <!-- Calculator Panel -->
+  <div id="calculatorPanel" class="hidden bg-[#2f2653] rounded-xl p-6 max-w-5xl mx-auto text-center mb-6 border border-purple-600">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      
+      <!-- Offer Section -->
+      <div class="p-4 rounded-xl border border-red-400 bg-[#1a162f]">
+        <h2 class="text-red-400 font-bold text-xl mb-4 border-b border-red-400 pb-2">🔻 OFFER</h2>
+        <div id="offerSlots" class="flex justify-center flex-wrap gap-2 mb-4 min-h-[50px]"></div>
+        <div class="bg-[#171423] px-4 py-2 rounded-xl flex justify-between text-sm">
+          <span class="font-semibold">Total Value</span>
+          <span id="offerValue" class="text-red-300 font-bold">0</span>
+        </div>
+      </div>
+
+      <!-- Request Section -->
+      <div class="p-4 rounded-xl border border-green-400 bg-[#142124]">
+        <h2 class="text-green-400 font-bold text-xl mb-4 border-b border-green-400 pb-2">🟩 REQUEST</h2>
+        <div id="requestSlots" class="flex justify-center flex-wrap gap-2 mb-4 min-h-[50px]"></div>
+        <div class="bg-[#171423] px-4 py-2 rounded-xl flex justify-between text-sm">
+          <span class="font-semibold">Total Value</span>
+          <span id="requestValue" class="text-green-300 font-bold">0</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Fairness Indicator -->
+    <div id="fairnessIndicator" class="mt-6 text-center text-sm font-semibold">
+      <span class="px-3 py-1 rounded-xl bg-yellow-500 text-black inline-block">⚖️ Fairness: Unknown</span>
+    </div>
+  </div>
+
+  <!-- Knife Grid -->
+  <main id="knifeGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 p-6 max-w-7xl mx-auto"></main>
+
+  <!-- Knife Detail Modal -->
+  <div id="modal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center hidden z-50">
+    <div class="bg-[#1e1b34] rounded-2xl p-6 w-full max-w-4xl relative text-white">
+      <button onclick="closeModal()" class="absolute top-4 right-6 text-white text-3xl">&times;</button>
+      <div class="grid md:grid-cols-3 gap-6 items-center">
+        <div class="bg-[#100d25] p-4 rounded-xl flex justify-center">
+          <img id="modalImage" src="" class="h-24" />
+        </div>
+        <div class="text-sm space-y-2">
+          <p><strong>Value:</strong> <span id="modalValue"></span></p>
+          <p><strong>Ranged Value:</strong> <span id="modalRange"></span></p>
+          <p><strong>Demand:</strong> <span id="modalDemand"></span></p>
+          <p><strong>Status:</strong> <span id="modalStatus"></span></p>
+        </div>
+        <div class="text-sm space-y-2">
+          <p><strong>Origin:</strong> <span id="modalOrigin"></span></p>
+          <p><strong>Unbox Chance:</strong> <span id="modalChance"></span></p>
+          <p><strong>Rarity:</strong> <span id="modalRarity"></span></p>
+        </div>
+      </div>
+      <h2 id="modalName" class="text-center text-xl mt-6 font-bold"></h2>
+    </div>
+  </div>
+
+  <script>
+    const knives = {
+      shimmer: {
+        name: "Shimmer Knife",
+        image: "https://i.postimg.cc/ZnNB9JBq/image.png",
+        value: 25,
+        range: "N/A",
+        demand: "1/10",
+        status: "Stable",
+        origin: "Standard / Premium Case",
+        chance: "Standard: 60% | Premium: 30%",
+        rarity: "Common"
+      },
+      bladeStar: {
+        name: "Blade Star",
+        image: "https://i.postimg.cc/7YxXhKXN/blade-star.png",
+        value: 150,
+        range: "140-160",
+        demand: "7/10",
+        status: "Rising",
+        origin: "Galaxy Crate",
+        chance: "5%",
+        rarity: "Ultra Rare"
+      },
+      toxicEdge: {
+        name: "Toxic Edge",
+        image: "https://i.postimg.cc/tTw9C6ZT/toxic-edge.png",
+        value: 80,
+        range: "75-90",
+        demand: "6/10",
+        status: "Stable",
+        origin: "Toxic Case",
+        chance: "15%",
+        rarity: "Rare"
+      }
+    };
+
+    const offerItems = [];
+    const requestItems = [];
+
+    function toggleCalculator() {
+      document.getElementById("calculatorPanel").classList.toggle("hidden");
+      document.body.classList.toggle("show-calculator");
+    }
+
+    function addToTrade(id, type) {
+      const container = type === 'offer' ? offerItems : requestItems;
+      if (container.length >= 4) return;
+      container.push(knives[id]);
+      updateTradeDisplay();
+    }
+
+    function removeFromTrade(index, type) {
+      if (type === 'offer') {
+        offerItems.splice(index, 1);
+      } else {
+        requestItems.splice(index, 1);
+      }
+      updateTradeDisplay();
+    }
+
+    function updateTradeDisplay() {
+      const offer = document.getElementById('offerSlots');
+      const request = document.getElementById('requestSlots');
+      offer.innerHTML = '';
+      request.innerHTML = '';
+      let offerTotal = 0;
+      let requestTotal = 0;
+
+      offerItems.forEach((item, index) => {
+        offer.innerHTML += `
+          <div class="relative group">
+            <img src="${item.image}" class="h-12 rounded border border-red-400 bg-[#171423]" />
+            <button onclick="removeFromTrade(${index}, 'offer')" class="absolute -top-2 -right-2 bg-red-600 text-white rounded-full w-5 h-5 text-xs hidden group-hover:block">×</button>
+          </div>`;
+        offerTotal += item.value;
+      });
+
+      requestItems.forEach((item, index) => {
+        request.innerHTML += `
+          <div class="relative group">
+            <img src="${item.image}" class="h-12 rounded border border-green-400 bg-[#171423]" />
+            <button onclick="removeFromTrade(${index}, 'request')" class="absolute -top-2 -right-2 bg-green-600 text-white rounded-full w-5 h-5 text-xs hidden group-hover:block">×</button>
+          </div>`;
+        request
+        requestTotal += item.value;
+      });
+
+      document.getElementById("offerValue").innerText = offerTotal;
+      document.getElementById("requestValue").innerText = requestTotal;
+
+      const indicator = document.getElementById("fairnessIndicator");
+      const diff = offerTotal - requestTotal;
+      let fairness = "⚖️ Fairness: ";
+
+      if (diff === 0) {
+        indicator.innerHTML = `<span class="px-3 py-1 rounded-xl bg-green-500 text-black inline-block">${fairness}Perfect</span>`;
+      } else if (Math.abs(diff) <= 10) {
+        indicator.innerHTML = `<span class="px-3 py-1 rounded-xl bg-yellow-400 text-black inline-block">${fairness}Fair</span>`;
+      } else if (diff > 10) {
+        indicator.innerHTML = `<span class="px-3 py-1 rounded-xl bg-red-500 text-black inline-block">${fairness}Overpay</span>`;
+      } else {
+        indicator.innerHTML = `<span class="px-3 py-1 rounded-xl bg-blue-500 text-white inline-block">${fairness}Underpay</span>`;
+      }
+    }
+
+    function renderKnives(filterText = "", rarity = "") {
+      knifeGrid.innerHTML = "";
+      Object.entries(knives).forEach(([id, knife]) => {
+        const matchesText = knife.name.toLowerCase().includes(filterText.toLowerCase());
+        const matchesRarity = rarity === "" || knife.rarity === rarity;
+        if (matchesText && matchesRarity) {
+          const card = document.createElement("div");
+          card.className = "knife-card";
+          card.innerHTML = `
+            <img src="${knife.image}" class="knife-img" />
+            <div class="knife-info">
+              <span>${knife.rarity.toUpperCase()}</span>
+              <h2>${knife.name}</h2>
+              <p>💰 Value: ${knife.value}</p>
+              <p>📉 Demand: ${knife.demand}</p>
+              <p>📈 Recent: ${knife.range}</p>
+              <div class="flex gap-2 mt-2 hidden offer-request-btns">
+                <button onclick="event.stopPropagation(); addToTrade('${id}', 'offer')" class="bg-red-600 hover:bg-red-700 px-2 py-1 rounded text-sm">Offer</button>
+                <button onclick="event.stopPropagation(); addToTrade('${id}', 'request')" class="bg-green-600 hover:bg-green-700 px-2 py-1 rounded text-sm">Request</button>
+              </div>
+            </div>`;
+          card.onclick = () => showKnife(id);
+          knifeGrid.appendChild(card);
+        }
+      });
+    }
+
+    function filterKnives() {
+      const text = document.getElementById("searchInput").value;
+      const rarity = document.getElementById("raritySelect").value;
+      renderKnives(text, rarity);
+    }
+
+    function showKnife(id) {
+      const knife = knives[id];
+      document.getElementById("modalImage").src = knife.image;
+      document.getElementById("modalValue").innerText = knife.value;
+      document.getElementById("modalRange").innerText = knife.range;
+      document.getElementById("modalDemand").innerText = knife.demand;
+      document.getElementById("modalStatus").innerText = knife.status;
+      document.getElementById("modalOrigin").innerText = knife.origin;
+      document.getElementById("modalChance").innerText = knife.chance;
+      document.getElementById("modalRarity").innerText = knife.rarity;
+      document.getElementById("modalName").innerText = knife.name;
+      document.getElementById("modal").classList.remove("hidden");
+    }
+
+    function closeModal() {
+      document.getElementById("modal").classList.add("hidden");
+    }
+
+    window.onload = () => renderKnives();
+  </script>
+
+  <style>
+    .knife-card {
+      background: #1e1b34;
+      border-radius: 1rem;
+      padding: 1rem;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    .knife-card:hover {
+      transform: scale(1.05);
+    }
+    .knife-img {
+      height: 70px;
+      margin: auto;
+      margin-bottom: 0.5rem;
+    }
+    .knife-info span {
+      font-size: 0.7rem;
+      background: #3a3655;
+      padding: 2px 6px;
+      border-radius: 4px;
+      text-transform: uppercase;
+    }
+    .knife-info h2 {
+      font-weight: bold;
+      margin: 4px 0;
+    }
+    .offer-request-btns {
+      display: none;
+    }
+    body.show-calculator .offer-request-btns {
+      display: flex;
+    }
+  </style>
+
+</body>
+</html>
